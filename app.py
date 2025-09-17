@@ -23,13 +23,16 @@ def add_player():
         name = request.form['name']
         team = request.form['team']
         position = request.form['position']
+        is_on_my_team = 'is_on_my_team' in request.form
         
         # Parse scores from form (comma-separated values)
         scores_str = request.form['scores']
         try:
             scores = [float(score.strip()) for score in scores_str.split(',')]
-            fantasy_app.add_player(name, team, position, scores)
-            flash(f'Player {name} added successfully!', 'success')
+            fantasy_app.add_player(name, team, position, scores, is_on_my_team)
+            
+            team_status = " and added to your team" if is_on_my_team else ""
+            flash(f'Player {name} added successfully!{team_status}', 'success')
             return redirect(url_for('index'))
         except ValueError:
             flash('Invalid scores format. Please enter comma-separated numbers.', 'error')
@@ -48,6 +51,43 @@ def player_detail(player_name):
     else:
         flash(f'Player {player_name} not found.', 'error')
         return redirect(url_for('index'))
+
+@app.route('/toggle_team/<player_name>')
+def toggle_team_status(player_name):
+    """Toggle whether a player is on my team or not"""
+    success = fantasy_app.db.toggle_my_team_status(player_name)
+    if success:
+        player = fantasy_app.db.get_player_by_name(player_name)
+        if player and player.is_on_my_team:
+            flash(f'{player_name} added to your team!', 'success')
+        elif player:
+            flash(f'{player_name} removed from your team!', 'success')
+    else:
+        flash(f'Player {player_name} not found.', 'error')
+    
+    return redirect(url_for('index'))
+
+@app.route('/my_team')
+def my_team():
+    """Show only players on my team"""
+    my_team_players = fantasy_app.db.get_my_team_players()
+    # Sort by final score
+    for player in my_team_players:
+        player.final_score = fantasy_app.calculator.calculate_weighted_score(player.scores)
+    my_team_players.sort(key=lambda p: p.final_score, reverse=True)
+    
+    return render_template('my_team.html', players=my_team_players)
+
+@app.route('/available_players')
+def available_players():
+    """Show only available players (not on my team)"""
+    available = fantasy_app.db.get_available_players()
+    # Sort by final score
+    for player in available:
+        player.final_score = fantasy_app.calculator.calculate_weighted_score(player.scores)
+    available.sort(key=lambda p: p.final_score, reverse=True)
+    
+    return render_template('available_players.html', players=available)
 
 @app.route('/edit_player/<player_name>', methods=['GET', 'POST'])
 def edit_player(player_name):

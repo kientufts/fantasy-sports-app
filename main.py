@@ -49,20 +49,22 @@ class FantasyApp:
         """Display the leaderboard in a formatted table"""
         leaderboard = self.get_leaderboard()
         
-        print("\n" + "="*80)
+        print("\n" + "="*90)
         print("FANTASY SPORTS LEADERBOARD")
-        print("="*80)
-        print(f"{'Rank':<4} {'Player':<20} {'Team':<10} {'Position':<12} {'Final Score':<12}")
-        print("-"*80)
+        print("="*90)
+        print(f"{'Rank':<4} {'Player':<20} {'Team':<10} {'Position':<12} {'Score':<8} {'Status':<10}")
+        print("-"*90)
         
         for i, player in enumerate(leaderboard, 1):
-            print(f"{i:<4} {player.name:<20} {player.team:<10} {player.position:<12} {player.final_score:.2f}")
+            status = "⭐ MY TEAM" if player.is_on_my_team else "Available"
+            print(f"{i:<4} {player.name:<20} {player.team:<10} {player.position:<12} {player.final_score:<8.2f} {status:<10}")
     
-    def add_player(self, name, team, position, scores):
+    def add_player(self, name, team, position, scores, is_on_my_team=False):
         """Add a new player to the database"""
-        player = Player(name, team, position, scores)
+        player = Player(name, team, position, scores, is_on_my_team)
         self.db.add_player(player)
-        print(f"Player {name} added successfully!")
+        team_status = "and added to your team" if is_on_my_team else ""
+        print(f"Player {name} added successfully! {team_status}")
     
     def update_player_scores(self, player_name, new_scores):
         """Update a player's scores"""

@@ -24,7 +24,8 @@ class Database:
                     team TEXT NOT NULL,
                     position TEXT NOT NULL,
                     scores TEXT NOT NULL,
-                    final_score REAL DEFAULT 0.0
+                    final_score REAL DEFAULT 0.0,
+                    is_on_my_team BOOLEAN DEFAULT 0
                 )
             ''')
             conn.commit()
@@ -37,9 +38,9 @@ class Database:
             
             try:
                 cursor.execute('''
-                    INSERT INTO players (name, team, position, scores, final_score)
-                    VALUES (?, ?, ?, ?, ?)
-                ''', (player.name, player.team, player.position, scores_json, player.final_score))
+                    INSERT INTO players (name, team, position, scores, final_score, is_on_my_team)
+                    VALUES (?, ?, ?, ?, ?, ?)
+                ''', (player.name, player.team, player.position, scores_json, player.final_score, player.is_on_my_team))
                 conn.commit()
                 return True
             except sqlite3.IntegrityError:
@@ -50,14 +51,14 @@ class Database:
         """Retrieve all players from the database"""
         with sqlite3.connect(self.db_path) as conn:
             cursor = conn.cursor()
-            cursor.execute('SELECT name, team, position, scores FROM players')
+            cursor.execute('SELECT name, team, position, scores, is_on_my_team FROM players')
             rows = cursor.fetchall()
             
             players = []
             for row in rows:
-                name, team, position, scores_json = row
+                name, team, position, scores_json, is_on_my_team = row
                 scores = json.loads(scores_json)
-                player = Player(name, team, position, scores)
+                player = Player(name, team, position, scores, bool(is_on_my_team))
                 players.append(player)
             
             return players
@@ -66,13 +67,13 @@ class Database:
         """Get a specific player by name"""
         with sqlite3.connect(self.db_path) as conn:
             cursor = conn.cursor()
-            cursor.execute('SELECT name, team, position, scores FROM players WHERE name = ?', (name,))
+            cursor.execute('SELECT name, team, position, scores, is_on_my_team FROM players WHERE name = ?', (name,))
             row = cursor.fetchone()
             
             if row:
-                name, team, position, scores_json = row
+                name, team, position, scores_json, is_on_my_team = row
                 scores = json.loads(scores_json)
-                return Player(name, team, position, scores)
+                return Player(name, team, position, scores, bool(is_on_my_team))
             return None
     
     def update_player_scores(self, name, new_scores):
@@ -104,6 +105,62 @@ class Database:
             
             conn.commit()
             return cursor.rowcount > 0
+    
+    def toggle_my_team_status(self, name):
+        """Toggle whether a player is on my team or not"""
+        with sqlite3.connect(self.db_path) as conn:
+            cursor = conn.cursor()
+            
+            # Get current status
+            cursor.execute('SELECT is_on_my_team FROM players WHERE name = ?', (name,))
+            row = cursor.fetchone()
+            if not row:
+                return False
+            
+            current_status = bool(row[0])
+            new_status = not current_status
+            
+            # Update status
+            cursor.execute('''
+                UPDATE players 
+                SET is_on_my_team = ?
+                WHERE name = ?
+            ''', (new_status, name))
+            
+            conn.commit()
+            return cursor.rowcount > 0
+    
+    def get_my_team_players(self):
+        """Get all players currently on my team"""
+        with sqlite3.connect(self.db_path) as conn:
+            cursor = conn.cursor()
+            cursor.execute('SELECT name, team, position, scores, is_on_my_team FROM players WHERE is_on_my_team = 1')
+            rows = cursor.fetchall()
+            
+            players = []
+            for row in rows:
+                name, team, position, scores_json, is_on_my_team = row
+                scores = json.loads(scores_json)
+                player = Player(name, team, position, scores, bool(is_on_my_team))
+                players.append(player)
+            
+            return players
+    
+    def get_available_players(self):
+        """Get all players not currently on my team"""
+        with sqlite3.connect(self.db_path) as conn:
+            cursor = conn.cursor()
+            cursor.execute('SELECT name, team, position, scores, is_on_my_team FROM players WHERE is_on_my_team = 0')
+            rows = cursor.fetchall()
+            
+            players = []
+            for row in rows:
+                name, team, position, scores_json, is_on_my_team = row
+                scores = json.loads(scores_json)
+                player = Player(name, team, position, scores, bool(is_on_my_team))
+                players.append(player)
+            
+            return players
     
     def delete_player(self, name):
         """Delete a player from the database"""
