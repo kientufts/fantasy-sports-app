@@ -58,9 +58,13 @@
         tr:hover {
             background-color: #f5f5f5;
         }
-        .rank-1 { background-color: #ffd700; }
-        .rank-2 { background-color: #c0c0c0; }
-        .rank-3 { background-color: #cd7f32; }
+        .my-team-player { 
+            background-color: #c3e6cb; /* More visible green background for my team players */
+            border-left: 4px solid #28a745; /* Green left border for extra visibility */
+        }
+        .available-player { 
+            background-color: white; /* White background for available players */
+        }
         .player-link {
             color: #007bff;
             text-decoration: none;
@@ -143,7 +147,7 @@
             </thead>
             <tbody>
                 {% for player in players %}
-                <tr class="{% if loop.index <= 3 %}rank-{{ loop.index }}{% endif %}">
+                <tr class="{% if player.is_on_my_team %}my-team-player{% else %}available-player{% endif %}">
                     <td>{{ loop.index }}</td>
                     <td>
                         <a href="{{ url_for('player_detail', player_name=player.name) }}" class="player-link">
