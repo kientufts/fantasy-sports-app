@@ -6,9 +6,11 @@ A comprehensive Python application for managing fantasy sports players with soph
 
 - **Player Database**: Store and manage hundreds of player records with team, position, and performance data
 - **Weighted Scoring**: Advanced algorithm that calculates player scores using weighted averages, giving more importance to recent game weeks
+- **Team Management**: Build and manage your fantasy team with visual indicators and separate views
 - **Sortable Leaderboard**: Players automatically ranked by their final weighted scores
 - **Web Interface**: User-friendly Flask web application with multiple views
 - **Database Filtering**: View players by teams and positions
+- **My Team vs Available**: Clear differentiation between rostered players and available options
 - **Detailed Analytics**: Individual player breakdowns showing score calculations
 
 ## Scoring Formula
@@ -33,13 +35,18 @@ fantasy/
 ├── models.py           # Player data model
 ├── database.py         # SQLite database operations
 ├── scoring.py          # Weighted score calculation logic
+├── migrate_db.py       # Database migration script
 ├── requirements.txt    # Python dependencies
 ├── templates/          # HTML templates for web interface
 │   ├── index.html      # Main leaderboard
 │   ├── add_player.html # Add new player form
+│   ├── edit_player.html # Edit existing player
 │   ├── player_detail.html # Individual player details
+│   ├── my_team.html    # Players on your fantasy team
+│   ├── available_players.html # Players not on your team
 │   ├── teams.html      # Players grouped by teams
-│   └── positions.html  # Players grouped by positions
+│   ├── positions.html  # Players grouped by positions
+│   └── manage_data.html # Data management interface
 └── README.md           # This file
 ```
 
@@ -174,14 +181,24 @@ python3 -m flask --app app run
 
 #### Web Features:
 
-- **Leaderboard** (`/`): View all players ranked by weighted score with quick edit/delete actions
-- **Add Player** (`/add_player`): Add new players to the database
+- **Leaderboard** (`/`): View all players ranked by weighted score with team status indicators and quick actions
+- **Add Player** (`/add_player`): Add new players with option to immediately add to your team
+- **My Team** (`/my_team`): View only players currently on your fantasy team (⭐ indicators)
+- **Available Players** (`/available_players`): Browse players not on your team for potential additions
 - **Player Details** (`/player/<name>`): Detailed breakdown with calculation details and edit/delete buttons
 - **Edit Player** (`/edit_player/<name>`): Modify existing player information and scores
 - **Teams** (`/teams`): View players grouped by their teams
 - **Positions** (`/positions`): View players grouped by their positions
 - **Manage Data** (`/manage_data`): Comprehensive data management with bulk delete operations
 - **API** (`/api/leaderboard`): JSON endpoint for programmatic access
+
+#### Team Management:
+
+- **➕ Add to Team**: Click the green ➕ button to add a player to your fantasy team
+- **➖ Remove from Team**: Click the red ➖ button to remove a player from your team
+- **⭐ Team Indicators**: Stars show which players are currently on your team
+- **Separate Views**: Use "My Team" to focus on your roster, "Available" to browse options
+- **Color Coding**: Green buttons for My Team page, blue for Available Players page
 
 ## Database
 
@@ -215,6 +232,21 @@ The database file contains a `players` table with the following structure:
 | `position` | TEXT | Player position |
 | `scores` | TEXT | JSON array of game scores |
 | `final_score` | REAL | Calculated weighted score |
+| `is_on_my_team` | BOOLEAN | Whether player is on your fantasy team (0/1) |
+
+### Database Migration
+
+If you're upgrading from an older version, the app includes automatic database migration:
+
+```bash
+python migrate_db.py
+```
+
+This script will:
+- Check if the `is_on_my_team` column exists
+- Add the column if missing (defaults to 0/False for existing players)
+- Preserve all existing data
+- Enable team management features
 
 ### Data Lifecycle
 
