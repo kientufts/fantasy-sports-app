@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit {{ player.name }} - Fantasy Sports</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .nav {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .nav a {
+            text-decoration: none;
+            color: #007bff;
+            padding: 10px 20px;
+            border-radius: 5px;
+            border: 1px solid #007bff;
+        }
+        .nav a:hover {
+            background-color: #007bff;
+            color: white;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+            font-weight: bold;
+        }
+        input[type="text"], select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        .button-group {
+            display: flex;
+            gap: 10px;
+        }
+        button {
+            flex: 1;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            color: white;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+        .btn-secondary:hover {
+            background-color: #545b62;
+        }
+        .help-text {
+            font-size: 14px;
+            color: #666;
+            margin-top: 5px;
+        }
+        .flash-messages {
+            margin-bottom: 20px;
+        }
+        .flash-success {
+            background-color: #d4edda;
+            color: #155724;
+            padding: 10px;
+            border-radius: 4px;
+            border: 1px solid #c3e6cb;
+        }
+        .flash-error {
+            background-color: #f8d7da;
+            color: #721c24;
+            padding: 10px;
+            border-radius: 4px;
+            border: 1px solid #f5c6cb;
+        }
+        .warning {
+            background-color: #fff3cd;
+            color: #856404;
+            padding: 15px;
+            border-radius: 4px;
+            border: 1px solid #ffeaa7;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>✏️ Edit Player: {{ player.name }}</h1>
+        
+        <div class="nav">
+            <a href="{{ url_for('index') }}">Leaderboard</a>
+            <a href="{{ url_for('add_player') }}">Add Player</a>
+            <a href="{{ url_for('teams') }}">Teams</a>
+            <a href="{{ url_for('positions') }}">Positions</a>
+            <a href="{{ url_for('manage_data') }}">Manage Data</a>
+        </div>
+        
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for category, message in messages %}
+                        <div class="flash-{{ category }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+        
+        <div class="warning">
+            <strong>⚠️ Editing Player Data:</strong> Changes will permanently update the player's information in the database. 
+            Make sure all information is correct before saving.
+        </div>
+        
+        <form method="POST">
+            <div class="form-group">
+                <label for="name">Player Name:</label>
+                <input type="text" id="name" name="name" value="{{ player.name }}" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="team">Team:</label>
+                <input type="text" id="team" name="team" value="{{ player.team }}" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="position">Position:</label>
+                <select id="position" name="position" required>
+                    <option value="Forward" {% if player.position == 'Forward' %}selected{% endif %}>Forward</option>
+                    <option value="Midfielder" {% if player.position == 'Midfielder' %}selected{% endif %}>Midfielder</option>
+                    <option value="Defender" {% if player.position == 'Defender' %}selected{% endif %}>Defender</option>
+                    <option value="Goalkeeper" {% if player.position == 'Goalkeeper' %}selected{% endif %}>Goalkeeper</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="scores">Game Scores:</label>
+                <input type="text" id="scores" name="scores" 
+                       value="{{ ', '.join(player.scores|map('string')) }}" required>
+                <div class="help-text">
+                    Enter comma-separated scores for each game week (e.g., 85, 92, 78, 88, 95)
+                </div>
+            </div>
+            
+            <div class="button-group">
+                <button type="submit" class="btn-primary">💾 Save Changes</button>
+                <button type="button" class="btn-secondary" onclick="history.back()">❌ Cancel</button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>
