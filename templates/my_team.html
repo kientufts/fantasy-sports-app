@@ -2,7 +2,24 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" cont        <div style="text-align: center; margin-bottom: 20px;">
+            <h2>{{ current_league.display_name }} ({{ current_league.sport_type }})</h2>
+            <div style="margin: 10px 0;">
+                <strong>Switch League:</strong>
+                {% for league in all_leagues %}
+                    {% if league.id != current_league.id %}
+                        <a href="{{ url_for('switch_league', league_id=league.id) }}" 
+                           style="margin: 0 10px; color: #007bff; text-decoration: underline;">
+                            {{ league.display_name }}
+                        </a>
+                    {% endif %}
+                {% endfor %}
+                <a href="{{ url_for('leagues_overview') }}" 
+                   style="margin-left: 20px; color: #28a745; text-decoration: underline;">
+                    🏟️ All Leagues
+                </a>
+            </div>
+        </div>width, initial-scale=1.0">
     <title>My Team - Fantasy Sports</title>
     <style>
         body {
@@ -96,6 +113,28 @@
 <body>
     <div class="container">
         <h1>⭐ My Team</h1>
+        
+        <!-- League Info -->
+        {% if current_league %}
+        <div style="text-align: center; margin-bottom: 20px;">
+            <h2>{{ current_league.name }} ({{ current_league.sport }})</h2>
+            <div style="margin: 10px 0;">
+                <strong>Switch League:</strong>
+                {% for league in all_leagues %}
+                    {% if league.id != current_league.id %}
+                        <a href="{{ url_for('switch_league', league_id=league.id) }}" 
+                           style="margin: 0 10px; color: #007bff; text-decoration: underline;">
+                            {{ league.name }}
+                        </a>
+                    {% endif %}
+                {% endfor %}
+                <a href="{{ url_for('leagues_overview') }}" 
+                   style="margin-left: 20px; color: #28a745; text-decoration: underline;">
+                    🏟️ All Leagues
+                </a>
+            </div>
+        </div>
+        {% endif %}
         
         <div class="nav">
             <a href="{{ url_for('index') }}">Leaderboard</a>

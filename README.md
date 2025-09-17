@@ -1,17 +1,39 @@
-# Fantasy Sports Player Scoring App
+# Multi-League Fantasy Sports Player Scoring App
 
-A comprehensive Python application for managing fantasy sports players with sophisticated weighted scoring system that prioritizes recent performance.
+A comprehensive Python application for managing fantasy sports players across multiple leagues (Formula 1, EPL, UCL, NFL) with sophisticated weighted scoring system that prioritizes recent performance.
 
 ## Features
 
+- **Multi-League Support**: Manage fantasy teams across Formula 1, English Premier League, UEFA Champions League, and NFL
+- **League-Specific Data**: Each league has its own teams, positions, and player database
+- **Session-Based League Switching**: Seamlessly switch between leagues while maintaining your progress
 - **Player Database**: Store and manage hundreds of player records with team, position, and performance data
 - **Weighted Scoring**: Advanced algorithm that calculates player scores using weighted averages, giving more importance to recent game weeks
-- **Team Management**: Build and manage your fantasy team with visual indicators and separate views
-- **Sortable Leaderboard**: Players automatically ranked by their final weighted scores
-- **Web Interface**: User-friendly Flask web application with multiple views
-- **Database Filtering**: View players by teams and positions
-- **My Team vs Available**: Clear differentiation between rostered players and available options
+- **Team Management**: Build and manage your fantasy team with visual indicators and separate views per league
+- **Sortable Leaderboard**: Players automatically ranked by their final weighted scores within each league
+- **Web Interface**: User-friendly Flask web application with multi-league navigation
+- **Console Interface**: Interactive command-line interface with league switching and team management
+- **Database Filtering**: View players by teams and positions within each league
+- **My Team vs Available**: Clear differentiation between rostered players and available options per league
 - **Detailed Analytics**: Individual player breakdowns showing score calculations
+
+## Supported Leagues
+
+### Formula 1 (Motorsport)
+- **Positions**: Driver, Constructor
+- **Teams**: Red Bull Racing, Mercedes, Ferrari, McLaren, Alpine, Aston Martin, Williams, AlphaTauri, Alfa Romeo, Haas
+
+### English Premier League (Football) 
+- **Positions**: Forward, Midfielder, Defender, Goalkeeper
+- **Teams**: Manchester City, Arsenal, Liverpool, Chelsea, Newcastle United, Manchester United, Tottenham, Brighton, Aston Villa, West Ham
+
+### UEFA Champions League (Football)
+- **Positions**: Forward, Midfielder, Defender, Goalkeeper  
+- **Teams**: Real Madrid, Manchester City, Bayern Munich, PSG, Liverpool, Barcelona, Chelsea, Inter Milan, AC Milan, Atletico Madrid
+
+### National Football League (American Football)
+- **Positions**: Quarterback, Running Back, Wide Receiver, Tight End, Defense, Kicker
+- **Teams**: Kansas City Chiefs, Buffalo Bills, Cincinnati Bengals, Philadelphia Eagles, San Francisco 49ers, Dallas Cowboys, Miami Dolphins, Baltimore Ravens
 
 ## Scoring Formula
 
@@ -21,33 +43,35 @@ The app uses a weighted average formula that emphasizes recent performance:
 Final Score = (Week1×1 + Week2×2 + ... + WeekN×N) ÷ (1+2+...+N)
 ```
 
-This ensures that a player's most recent games have the highest impact on their final ranking, reflecting their current form.
+This ensures that a player's most recent games have the highest impact on their final ranking, reflecting their current form within each league.
 
 ## Project Structure
 
 ```
 fantasy/
-├── app.py              # Flask web application
-├── main.py             # Console application entry point
+├── app.py              # Flask multi-league web application
+├── main.py             # Multi-league console application
 ├── launcher.py         # Cross-platform launcher script
 ├── status_checker.py   # App status checker and manager
 ├── launch.bat          # Windows launcher script
 ├── launch.sh           # macOS/Linux launcher script
-├── models.py           # Player data model
-├── database.py         # SQLite database operations
+├── models.py           # Player and League data models
+├── database.py         # SQLite database operations with multi-league support
 ├── scoring.py          # Weighted score calculation logic
-├── migrate_db.py       # Database migration script
+├── migrate_multi_league.py # Multi-league database migration script
+├── populate_leagues.py # Sample data population for all leagues
 ├── requirements.txt    # Python dependencies
-├── templates/          # HTML templates for web interface
-│   ├── index.html      # Main leaderboard
-│   ├── add_player.html # Add new player form
+├── templates/          # HTML templates for multi-league web interface
+│   ├── index.html      # Main leaderboard with league selector
+│   ├── leagues.html    # League overview and switching interface
+│   ├── add_player.html # Add new player form with league-specific options
 │   ├── edit_player.html # Edit existing player
 │   ├── player_detail.html # Individual player details
-│   ├── my_team.html    # Players on your fantasy team
-│   ├── available_players.html # Players not on your team
-│   ├── teams.html      # Players grouped by teams
-│   ├── positions.html  # Players grouped by positions
-│   └── manage_data.html # Data management interface
+│   ├── my_team.html    # Players on your fantasy team per league
+│   ├── available_players.html # Available players in current league
+│   ├── teams.html      # Players grouped by teams in current league
+│   ├── positions.html  # Players grouped by positions in current league
+│   └── manage_data.html # Data management interface per league
 └── README.md           # This file
 ```
 
@@ -118,9 +142,32 @@ chmod +x launch.sh
 
 These launchers will:
 - Check your Python version
-- Install dependencies automatically
+- Install dependencies automatically  
 - Provide a menu to choose console or web app
 - Handle platform-specific differences
+
+### Multi-League Console Interface
+
+Run the interactive console version to manage all your fantasy leagues:
+
+**Interactive Mode (Recommended):**
+```bash
+python main.py --interactive
+```
+
+This provides a menu-driven interface where you can:
+- View all available leagues (F1, EPL, UCL, NFL)
+- Switch between leagues seamlessly
+- View league-specific leaderboards
+- Manage your team for each league
+- Add players with league-specific teams and positions
+
+**Basic Demo Mode:**
+```bash
+python main.py
+```
+
+Shows a quick overview of leagues and sample data.
 
 ### Manual Launch
 
@@ -164,6 +211,31 @@ python app.py
 
 Then open your browser to `http://127.0.0.1:5000` or `http://localhost:5000`
 
+### Multi-League Web Interface
+
+The web application supports seamless switching between multiple fantasy leagues:
+
+**🏟️ League Navigation:**
+- **League Selector**: Each page shows the current league and provides quick links to switch
+- **Leagues Overview** (`/leagues`): Comprehensive view of all leagues with statistics
+- **Session Persistence**: Your current league selection is maintained throughout your session
+- **League-Specific Data**: All pages automatically filter to show only current league data
+
+**🏎️ Formula 1 Features:**
+- Driver and Constructor positions
+- F1-specific teams (Red Bull Racing, Mercedes, Ferrari, etc.)
+- Motorsport scoring optimized for race weekends
+
+**⚽ Football Leagues (EPL/UCL):**
+- Traditional football positions (Forward, Midfielder, Defender, Goalkeeper)
+- League-specific teams and player rosters
+- Match week scoring system
+
+**🏈 NFL Features:**
+- American football positions (QB, RB, WR, TE, Defense, Kicker)
+- NFL teams and season-based scoring
+- Fantasy football optimized calculations
+
 #### Alternative Launch Methods:
 
 **Using Flask's built-in command (all platforms):**
@@ -180,20 +252,21 @@ python -m flask --app app run
 python3 -m flask --app app run
 ```
 
-#### Web Features:
+#### Multi-League Web Features:
 
-- **Leaderboard** (`/`): View all players ranked by weighted score with team status indicators and quick actions
-- **Add Player** (`/add_player`): Add new players with option to immediately add to your team
-- **My Team** (`/my_team`): View only players currently on your fantasy team (⭐ indicators)
-- **Available Players** (`/available_players`): Browse players not on your team for potential additions
-- **Player Details** (`/player/<name>`): Detailed breakdown with calculation details and edit/delete buttons
-- **Edit Player** (`/edit_player/<name>`): Modify existing player information and scores
-- **Teams** (`/teams`): View players grouped by their teams
-- **Positions** (`/positions`): View players grouped by their positions
-- **Manage Data** (`/manage_data`): Comprehensive data management with bulk delete operations
-- **API** (`/api/leaderboard`): JSON endpoint for programmatic access
+- **Leaderboard** (`/`): View all players ranked by weighted score within current league with league switcher
+- **Leagues Overview** (`/leagues`): Switch between leagues and see team statistics for each
+- **Add Player** (`/add_player`): Add new players with league-specific team and position options
+- **My Team** (`/my_team`): View only players currently on your fantasy team for current league
+- **Available Players** (`/available_players`): Browse players not on your team in current league
+- **Player Details** (`/player/<name>`): Detailed breakdown with league context and calculation details
+- **Edit Player** (`/edit_player/<name>`): Modify existing player information within their league
+- **Teams** (`/teams`): View players grouped by their teams in current league
+- **Positions** (`/positions`): View players grouped by their positions in current league
+- **Manage Data** (`/manage_data`): League-specific data management with bulk operations
+- **API** (`/api/leaderboard`): JSON endpoint with optional league parameter
 
-#### Team Management:
+#### Team Management (Per League):
 
 - **➕ Add to Team**: Click the green ➕ button to add a player to your fantasy team
 - **➖ Remove from Team**: Click the red ➖ button to remove a player from your team
