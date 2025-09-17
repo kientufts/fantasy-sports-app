@@ -30,6 +30,7 @@ fantasy/
 ├── app.py              # Flask web application
 ├── main.py             # Console application entry point
 ├── launcher.py         # Cross-platform launcher script
+├── status_checker.py   # App status checker and manager
 ├── launch.bat          # Windows launcher script
 ├── launch.sh           # macOS/Linux launcher script
 ├── models.py           # Player data model
@@ -404,6 +405,188 @@ The application is designed with modularity in mind:
 - `main.py`: Console interface
 
 ## Troubleshooting
+
+### Checking if the Web App is Running
+
+Sometimes you may access the web interface and find it's not responding. Here are several ways to check if the Flask app is running:
+
+#### Method 1: Use the Status Checker Script (Recommended)
+```bash
+python status_checker.py
+```
+This interactive script will:
+- Check if the app is running and responding
+- Show the process ID if running
+- Provide options to start/stop the app
+- Open the app in your browser
+
+#### Method 2: Check Port Usage (Windows)
+```cmd
+netstat -ano | findstr :5000
+```
+- If you see output with "LISTENING", the app is running
+- The PID (Process ID) will be shown in the last column
+- If no output, the app is not running
+
+#### Method 3: Check Port Usage (macOS/Linux)
+```bash
+lsof -i :5000
+# OR
+netstat -tlnp | grep :5000
+```
+
+#### Method 4: Test HTTP Response
+```bash
+curl http://127.0.0.1:5000
+# OR open in browser: http://localhost:5000
+```
+- If you get HTML content, the app is running
+- If connection refused/timeout, the app is not running
+
+#### Method 5: Check Running Python Processes
+**Windows:**
+```cmd
+tasklist | findstr python
+```
+
+**macOS/Linux:**
+```bash
+ps aux | grep python
+ps aux | grep app.py
+```
+
+### Starting/Restarting the Web App
+
+#### Quick Start
+```bash
+# Navigate to project directory
+cd "path/to/fantasy"
+
+# Start the web app
+python app.py
+```
+
+#### Background Process (Keeps Running)
+**Windows (PowerShell):**
+```powershell
+# Start as background job
+Start-Job -ScriptBlock { python app.py }
+
+# Check job status
+Get-Job
+
+# Stop job
+Get-Job | Stop-Job
+```
+
+**Windows (Command Prompt):**
+```cmd
+# Start minimized (stays running when you close terminal)
+start /min python app.py
+```
+
+**macOS/Linux:**
+```bash
+# Start in background
+nohup python3 app.py &
+
+# Check if running
+jobs
+ps aux | grep app.py
+
+# Kill background process
+pkill -f app.py
+```
+
+### Keeping the App Running Permanently
+
+#### Option 1: VS Code Task (Recommended)
+1. In VS Code, go to `Terminal → Run Task`
+2. Select "Run Fantasy App (Web)"
+3. The task runs in the background and shows status in VS Code terminal
+4. To stop: Click the trash can icon in the terminal
+
+#### Option 2: Windows Service (Advanced)
+Create a Windows service using tools like NSSM (Non-Sucking Service Manager):
+```cmd
+# Install NSSM from https://nssm.cc/
+nssm install FantasyApp "C:\path\to\python.exe" "C:\path\to\fantasy\app.py"
+nssm start FantasyApp
+```
+
+#### Option 3: Screen/Tmux (Linux/macOS)
+```bash
+# Using screen
+screen -S fantasy
+python3 app.py
+# Press Ctrl+A then D to detach
+
+# Reattach later
+screen -r fantasy
+
+# Using tmux
+tmux new -s fantasy
+python3 app.py
+# Press Ctrl+B then D to detach
+
+# Reattach later
+tmux attach -t fantasy
+```
+
+### Auto-Start on System Boot
+
+#### Windows (Task Scheduler)
+1. Open Task Scheduler
+2. Create Basic Task → "Fantasy Sports App"
+3. Trigger: "When the computer starts"
+4. Action: "Start a program"
+5. Program: `C:\path\to\python.exe`
+6. Arguments: `C:\path\to\fantasy\app.py`
+7. Start in: `C:\path\to\fantasy`
+
+#### macOS (launchd)
+Create file `~/Library/LaunchAgents/com.fantasy.app.plist`:
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.fantasy.app</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/usr/bin/python3</string>
+        <string>/path/to/fantasy/app.py</string>
+    </array>
+    <key>RunAtLoad</key>
+    <true/>
+</dict>
+</plist>
+```
+Then: `launchctl load ~/Library/LaunchAgents/com.fantasy.app.plist`
+
+#### Linux (systemd)
+Create file `/etc/systemd/system/fantasy-app.service`:
+```ini
+[Unit]
+Description=Fantasy Sports App
+After=network.target
+
+[Service]
+Type=simple
+User=yourusername
+WorkingDirectory=/path/to/fantasy
+ExecStart=/usr/bin/python3 /path/to/fantasy/app.py
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+```
+Then:
+```bash
+sudo systemctl enable fantasy-app.service
+sudo systemctl start fantasy-app.service
+```
 
 ### Common Issues and Solutions
 
