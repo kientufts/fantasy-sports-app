@@ -9,13 +9,13 @@ Features:
 - Sorted leaderboard based on final scores per league
 """
 
-from database import Database
-from models import Player, League
-from scoring import WeightedScoreCalculator
+from src.core.database import Database
+from src.core.models import Player, League
+from src.core.scoring import WeightedScoreCalculator
 
 
 class MultiLeagueFantasyApp:
-    def __init__(self, db_path='fantasy_players.db'):
+    def __init__(self, db_path='data/fantasy_players.db'):
         self.db = Database(db_path)
         self.calculator = WeightedScoreCalculator()
         self.current_league_id = 2  # Default to EPL

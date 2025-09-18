@@ -17,7 +17,7 @@ from datetime import datetime
 
 def migrate_to_multi_league():
     """Migrate database to support multiple leagues"""
-    db_path = 'fantasy_players.db'
+    db_path = '../../data/fantasy_players.db'
     
     if not os.path.exists(db_path):
         print("Database does not exist yet. No migration needed.")
@@ -99,7 +99,7 @@ def migrate_to_multi_league():
 
 def show_league_stats():
     """Show statistics for each league"""
-    db_path = 'fantasy_players.db'
+    db_path = '../../data/fantasy_players.db'
     
     if not os.path.exists(db_path):
         print("Database does not exist yet.")

@@ -3,8 +3,12 @@ Sample data generator for multi-league fantasy sports app
 Creates realistic sample players for F1, EPL, UCL, and NFL leagues
 """
 
-from database import Database
-from models import Player
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+
+from src.core.database import Database
+from src.core.models import Player
 import random
 
 def generate_sample_scores(num_weeks=5, base_range=(70, 95)):
@@ -192,7 +196,7 @@ def create_nfl_players(db):
 
 def populate_all_leagues():
     """Populate all leagues with sample players"""
-    db = Database()
+    db = Database('../../data/fantasy_players.db')
     
     print("🏆 Populating Multi-League Fantasy Database")
     print("=" * 50)

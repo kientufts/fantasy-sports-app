@@ -5,7 +5,7 @@ Uses SQLite for local storage of player data with multi-league support
 
 import sqlite3
 import json
-from models import Player, League
+from .models import Player, League
 
 
 class Database:

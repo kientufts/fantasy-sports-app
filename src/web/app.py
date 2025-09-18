@@ -4,16 +4,20 @@ Multi-League Support for F1, EPL, UCL, NFL
 """
 
 from flask import Flask, render_template, request, redirect, url_for, flash, jsonify, session
-from database import Database
-from scoring import WeightedScoreCalculator
-from models import Player
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+
+from src.core.database import Database
+from src.core.scoring import WeightedScoreCalculator
+from src.core.models import Player
 import json
 
 app = Flask(__name__)
 app.secret_key = 'your-secret-key-here-multi-league'  # Change this in production
 
 # Initialize database and calculator
-db = Database()
+db = Database('data/fantasy_players.db')
 calculator = WeightedScoreCalculator()
 
 def get_current_league():
@@ -337,7 +341,7 @@ if __name__ == '__main__':
     for league in all_leagues:
         if len(db.get_players_by_league(league.id)) == 0:
             # If any league is empty, run the populate script
-            import populate_leagues
+            from scripts.setup import populate_leagues
             populate_leagues.populate_all_leagues()
             break
     
