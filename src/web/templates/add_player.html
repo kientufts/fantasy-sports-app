@@ -144,7 +144,7 @@
             
             <div class="form-group">
                 <label for="team">Team:</label>
-                {% if current_league %}
+                {% if current_league and current_league.name in ['f1', 'epl', 'ucl'] %}
                 <select id="team" name="team" required>
                     <option value="">Select Team</option>
                     {% for team in current_league.get_typical_teams() %}
@@ -152,7 +152,7 @@
                     {% endfor %}
                 </select>
                 {% else %}
-                <input type="text" id="team" name="team" required>
+                <input type="text" id="team" name="team" required placeholder="Enter team name">
                 {% endif %}
             </div>
             
