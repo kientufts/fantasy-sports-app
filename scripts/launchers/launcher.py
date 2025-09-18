@@ -41,11 +41,16 @@ def run_console_app():
     """Launch the console version"""
     print("Starting console app...")
     try:
-        subprocess.run([sys.executable, "../../main.py"])
+        # Change back to root directory and run
+        os.chdir("../..")
+        subprocess.run([sys.executable, "main.py"])
     except KeyboardInterrupt:
         print("\nApp stopped by user.")
     except Exception as e:
         print(f"Error running console app: {e}")
+    finally:
+        # Return to launcher directory
+        os.chdir("scripts/launchers")
 
 
 def run_web_app():
@@ -54,11 +59,16 @@ def run_web_app():
     print("Open http://localhost:5000 in your browser")
     print("Press Ctrl+C to stop the server")
     try:
-        subprocess.run([sys.executable, "../../src/web/app.py"])
+        # Change back to root directory and run
+        os.chdir("../..")
+        subprocess.run([sys.executable, "src/web/app.py"])
     except KeyboardInterrupt:
         print("\nWeb server stopped by user.")
     except Exception as e:
         print(f"Error running web app: {e}")
+    finally:
+        # Return to launcher directory
+        os.chdir("scripts/launchers")
 
 
 def run_web_app_with_restart():
@@ -74,10 +84,14 @@ def run_web_app_with_restart():
     while True:
         try:
             print(f"Starting app... (restart #{restart_count})")
-            process = subprocess.Popen([sys.executable, "../../src/web/app.py"], 
+            # Change back to root directory and run
+            os.chdir("../..")
+            process = subprocess.Popen([sys.executable, "src/web/app.py"], 
                                      stdout=subprocess.PIPE, 
                                      stderr=subprocess.STDOUT,
                                      universal_newlines=True)
+            # Return to launcher directory for next iteration
+            os.chdir("scripts/launchers")
             
             # Reset interrupt counter on successful start
             consecutive_interrupts = 0
