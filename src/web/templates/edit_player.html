@@ -156,10 +156,16 @@
             <div class="form-group">
                 <label for="position">Position:</label>
                 <select id="position" name="position" required>
-                    <option value="Forward" {% if player.position == 'Forward' %}selected{% endif %}>Forward</option>
-                    <option value="Midfielder" {% if player.position == 'Midfielder' %}selected{% endif %}>Midfielder</option>
-                    <option value="Defender" {% if player.position == 'Defender' %}selected{% endif %}>Defender</option>
-                    <option value="Goalkeeper" {% if player.position == 'Goalkeeper' %}selected{% endif %}>Goalkeeper</option>
+                    {% if current_league %}
+                        {% for position in current_league.get_position_types() %}
+                            <option value="{{ position }}" {% if player.position == position %}selected{% endif %}>{{ position }}</option>
+                        {% endfor %}
+                    {% else %}
+                        <option value="Forward" {% if player.position == 'Forward' %}selected{% endif %}>Forward</option>
+                        <option value="Midfielder" {% if player.position == 'Midfielder' %}selected{% endif %}>Midfielder</option>
+                        <option value="Defender" {% if player.position == 'Defender' %}selected{% endif %}>Defender</option>
+                        <option value="Goalkeeper" {% if player.position == 'Goalkeeper' %}selected{% endif %}>Goalkeeper</option>
+                    {% endif %}
                 </select>
             </div>
             
