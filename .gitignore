@@ -69,8 +69,9 @@ venv.bak/
 ehthumbs.db
 Thumbs.db
 
-# Database (optional - remove if you want to include sample data)
-# fantasy_players.db
+# Database (protect user data)
+*.db
+data/fantasy_players.db
 
 # Logs
 *.log
