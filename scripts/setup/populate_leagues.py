@@ -196,7 +196,12 @@ def create_nfl_players(db):
 
 def populate_all_leagues():
     """Populate all leagues with sample players"""
-    db = Database('../../data/fantasy_players.db')
+    # Use absolute path based on script location
+    script_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    db_path = os.path.join(script_dir, 'data', 'fantasy_players.db')
+    print(f"Using database path: {db_path}")
+    
+    db = Database(db_path)
     
     print("🏆 Populating Multi-League Fantasy Database")
     print("=" * 50)
@@ -242,3 +247,22 @@ if __name__ == "__main__":
         populate_all_leagues()
     except Exception as e:
         print(f"❌ Error populating leagues: {e}")
+        print(f"Error type: {type(e).__name__}")
+        import traceback
+        print("Full traceback:")
+        traceback.print_exc()
+        
+        # Additional debugging info
+        import os
+        print(f"\nDebugging info:")
+        print(f"Current working directory: {os.getcwd()}")
+        print(f"Script location: {__file__}")
+        
+        # Check if database file exists
+        script_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+        db_path = os.path.join(script_dir, 'data', 'fantasy_players.db')
+        print(f"Expected database path: {db_path}")
+        print(f"Database file exists: {os.path.exists(db_path)}")
+        if os.path.exists(db_path):
+            print(f"Database file size: {os.path.getsize(db_path)} bytes")
+            print(f"Database file permissions: {oct(os.stat(db_path).st_mode)[-3:]}")
