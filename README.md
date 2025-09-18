@@ -116,35 +116,56 @@ fantasy/
 
 ## Usage
 
-### Quick Start (Recommended)
+### Cross-Platform Quick Start (Easiest Method)
 
-The easiest way to run the app on any platform is using the provided launcher scripts:
+**The simplest way to run this app on ANY operating system:**
 
-**Cross-Platform Python Launcher:**
+#### Option 1: Universal Launcher (Recommended)
 ```bash
+# Download and navigate to the app folder, then run:
 python launcher.py
-# OR on some systems:
-python3 launcher.py
 ```
 
-**Platform-Specific Scripts:**
+This works on Windows, macOS, and Linux! The launcher will:
+- ✅ Check Python version compatibility (3.8+)
+- ✅ Install dependencies automatically  
+- ✅ Provide interactive menu (Console/Web/Web with Auto-Restart)
+- ✅ Handle platform differences automatically
+- ✅ Auto-restart web app if it crashes (Option 3)
 
-**Windows:**
-```cmd
-launch.bat
-```
+#### Option 2: Platform-Specific Quick Start
 
-**macOS/Linux:**
+**Windows Users:**
+- Double-click `start_app.bat` 
+- Or run in Command Prompt: `start_app.bat`
+
+**macOS/Linux Users:**
+- Open Terminal in the app folder
+- Run: `chmod +x start_app.sh && ./start_app.sh`
+
+#### Option 3: Direct Python Commands
+
+**For Web App (with reliability):**
 ```bash
-chmod +x launch.sh
-./launch.sh
+# Recommended: Auto-restart capability
+python launcher.py  # Choose option 3
+
+# Basic: No auto-restart
+python app.py
 ```
 
-These launchers will:
-- Check your Python version
-- Install dependencies automatically  
-- Provide a menu to choose console or web app
-- Handle platform-specific differences
+**For Console App:**
+```bash
+python main.py
+```
+
+### Why Use the Launcher?
+
+- **Universal**: Works on Windows, macOS, Linux
+- **Smart**: Detects your Python setup automatically
+- **Reliable**: Auto-restart feature keeps web app running
+- **User-friendly**: Interactive menu instead of remembering commands
+- **Zero-config**: No need to manually install dependencies
 
 ### Multi-League Console Interface
 
